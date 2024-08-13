@@ -17,6 +17,7 @@ meson setup \
   -Dges=disabled \
   -Dpython=enabled \
   -Dgpl=enabled \
+  -Drs=disabled \
   -Dqt5=disabled \
   -Dqt6=disabled \
   -Dtests=disabled \
