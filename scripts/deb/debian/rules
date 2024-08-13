@@ -1,0 +1,88 @@
+#!/usr/bin/make -f
+
+# See debhelper(7) (uncomment to enable).
+# Output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+GST_PACKAGE_NAME := "GStreamer (Debian)"
+
+
+export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+export BUILDDIR=build-${DEB_HOST_MULTIARCH}
+export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+export HOME=$(CURDIR)/fake-HOME
+export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
+
+DEB_BUILD_OPTIONS=nocheck
+CFLAGS += -Wno-error
+CXXFLAGS += -Wno-error
+LDFLAGS += -Wl,-z,defs -Wl,-O1
+RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2
+
+# Let's decide the package name and url depending on the distribution
+DISTRO = "$(shell dpkg-vendor --query vendor)"
+
+
+#conf_flags = --libexecdir=lib/$(DEB_HOST_MULTIARCH)/gstreamer1.0
+conf_flags = -Dpackage-name=$(GST_PACKAGE_NAME) --buildtype=release --strip
+conf_flags += --pkgconfig.relocatable --prefix=/opt/gstreamer -Dlibdir=lib
+conf_flags += -Ddoc=disabled -Dexamples=disabled
+conf_flags += -Dgst-full-libraries=app,video,player -Dwebrtc=enabled -Drtsp_server=disabled
+conf_flags += -Dlibav=disabled -Dges=disabled -Dpython=enabled -Dgpl=enabled
+conf_flags += -Dqt5=disabled -Dqt6=disabled -Dtests=disabled -Dgtk_doc=disabled
+conf_flags += -Dgstreamer:examples=disabled -Dgstreamer:tests=disabled -Dgstreamer:doc=disabled
+conf_flags += -Dgst-plugins-base:examples=disabled
+conf_flags += -Dgst-plugins-bad:magicleap=disabled
+conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure 
+
+
+
+
+# See FEATURE AREAS in dpkg-buildflags(1).
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# See ENVIRONMENT in dpkg-buildflags(1).
+# Package maintainers to append CFLAGS.
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# Package maintainers to append LDFLAGS.
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+
+%:
+	dh $@ --buildsystem=meson --builddirectory=${BUILDDIR}
+
+
+# dh_make generated override targets.
+# This is an example for Cmake (see <https://bugs.debian.org/641051>).
+#override_dh_auto_configure:
+#	dh_auto_configure -- \
+#	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
+
+override_dh_auto_configure:
+	meson setup $(conf_flags) ${BUILDDIR}
+
+#override_dh_auto_build:
+#	ninja -C ${BUILDDIR}
+
+#override_dh_auto_install:
+#	DESTDIR=$(CURDIR)/debian/tmp  meson install  -C ${BUILDDIR}
+
+#override_dh_install:
+#	dh_install --sourcedir=debian/tmp
+# Add --fail-missing option after adding *.install files for all subpackages.
+
+override_dh_auto_clean:
+	echo "Clean"
+#	rm -rf ${BUILDDIR}
+
+override_dh_clean:
+	dh_clean $@
+
+override_dh_auto_test:
+	dh_auto_test || true
+
+override_dh_installdocs-arch:
+	#dont install
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l/opt/gstreamer/lib -l$(shell pwd)/debian/gstreamer1.0/opt/gstreamer/lib --dpkg-shlibdeps-params=--ignore-missing-info 
