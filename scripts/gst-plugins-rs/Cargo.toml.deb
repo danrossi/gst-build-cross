@@ -1,0 +1,7 @@
+
+[package.metadata.deb]
+maintainer = 'Daniel Rossi <danielr@electroteque.org>'
+assets = [
+    ['target/release/libgstwebrtchttp.so', '/opt/gstreamer/lib/gstreamer1.0/', '644'],
+]
+revision = "1"

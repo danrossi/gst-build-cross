@@ -8,7 +8,11 @@ There is poor support trying to deal with the typical build issues with GStreame
 
 TODO: Add the RPI image build as cross compile options is too difficult to figure out and no current documentation how to do that.
 
-In Windows a Windows command is required to turn on case sensitive to the mount path or a rust package will fail due to files being named the same. 
+In Windows a Windows command is required to turn on case sensitive to the mount path or a rust package will fail due to files being named the same.
+
+```
+fsutil.exe file setCaseSensitiveInfo  D:\path\to\mount
+```
 
 It attempts to build and package a custom gstreamer into a deb package which can be used for installing into a prefix of `/opt/gstreamer`
 

@@ -9,7 +9,7 @@ ENV RUSTUP_HOME=/root/.cargo
 ENV PATH=$RUSTUP_HOME/bin:$PATH
 ENV XDG_CACHE_HOME=/build/src/.cache
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-ENV RUSTFLAGS="-Z threads=1 -C linker=x86_64-linux-gnu-gcc"
+ENV RUSTFLAGS="-Z threads=8 -C linker=x86_64-linux-gnu-gcc"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 #ENV PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/opt/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH
 #ENV NSS_UNKNOWN_HOME=/home/user
@@ -92,10 +92,13 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --pr
 rustup toolchain install nightly && \
 rustup default nightly && \
 cargo +nightly install cargo-c && \
-echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc && \
+cargo +nightly install cargo-deb && \
+#echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc && \
+echo "alias cargo=\"cargo +nightly\"" >> $HOME/.bashrc && \
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
-printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml"
+printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
+COPY scripts/gst-plugins-rs/Cargo.toml.deb /tmp/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
@@ -103,9 +106,11 @@ RUN mkdir $HOME/build && \
       cd gstreamer && \ 
       meson wrap install openssl && \
       meson subprojects download && \
-      meson subprojects update && \
-      cd $HOME/build && \
-      git clone https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git gst-plugins-rs
+      meson subprojects update &&
+      cat tmp/Cargo.toml.deb >> subprojects/gst-plugins-rs/net/webrtchttp/Cargo.toml &&
+      rm tmp/Cargo.toml.deb
+      #cd $HOME/build && \
+      #git clone https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git gst-plugins-rs
 
 
 
