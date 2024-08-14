@@ -18,7 +18,7 @@ DEB_BUILD_OPTIONS=nocheck
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
 LDFLAGS += -Wl,-z,defs -Wl,-O1
-RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2
+RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2 -Clinker=${DEB_HOST_MULTIARCH}-gcc
 
 
 # Let's decide the package name and url depending on the distribution
@@ -64,6 +64,8 @@ override_dh_auto_build:
 override_dh_auto_install:
 	DESTDIR=$(CURDIR)/debian/gstreamer1.0 meson install  -C ${BUILDDIR}
 	/build/scripts/install-rs.sh
+	mkdir -p ${DESTDIR}/etc/
+	cp -R /build/scripts/profile.d ${DESTDIR}/etc/
 
 override_dh_auto_test:
 	dh_auto_test || true

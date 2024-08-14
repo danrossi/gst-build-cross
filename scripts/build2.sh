@@ -32,10 +32,8 @@ meson setup \
   --reconfigure \
   build-x86_64-linux-gnu && \
   
-  ninja -C build-x86_64-linux-gnu 
-  #ninja -C build-x86_64-linux-gnu && \
-  #meson install --no-rebuild --only-changed -C build-x86_64-linux-gnu/ && \
-  #cd ../gst-plugins-rs && \
-  #LD_LIBRARY_PATH=/opt/gstreamer/lib PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/opt/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH cargo cinstall --prefix=/opt/gstreamer --libdir=lib -p gst-plugin-webrtchttp
-
-  #tar -zcf /build/dist/gstreamer.tar.gz /opt/gstreamer
+  #ninja -C build-x86_64-linux-gnu 
+  ninja -C build-x86_64-linux-gnu && \
+  meson install --no-rebuild --only-changed -C build-x86_64-linux-gnu/ && \
+  cd subprojects/gst-plugins-rs/net/webrtchttp && \
+  LD_LIBRARY_PATH=$HOME/build/gstreamer/build-x86_64-linux-gnu/subprojects/gstreamer/gst PKG_CONFIG_PATH=$HOME/build/gstreamer/build-x86_64-linux-gnu/meson-uninstalled cargo +nightly cinstall -r --prefix=/opt/gstreamer --libdir=lib --destdir=$HOME/build/gstreamer/debian/gstreamer1.0 -p gst-plugin-webrtchttp
