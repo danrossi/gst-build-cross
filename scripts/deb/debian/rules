@@ -10,14 +10,24 @@ GST_PACKAGE_NAME := "GStreamer (Debian)"
 export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 export BUILDDIR=build-${DEB_HOST_MULTIARCH}
 export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
-export HOME=$(CURDIR)/fake-HOME
+#export HOME=$(CURDIR)/fake-HOME
 export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
+
+
+
+#$(info    HOME is $(HOME))
+#$(info    PATH is $(PATH))
 
 DEB_BUILD_OPTIONS=nocheck
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
 LDFLAGS += -Wl,-z,defs -Wl,-O1
 RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2
+
+
+#$(info    RUSTFLAGS is $(RUSTFLAGS))
+#$(info    CARGO_HOME is $(CARGO_HOME))
+
 
 # Let's decide the package name and url depending on the distribution
 DISTRO = "$(shell dpkg-vendor --query vendor)"
@@ -49,7 +59,7 @@ conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure
 
 
 %:
-	dh $@ --buildsystem=meson --builddirectory=${BUILDDIR}
+	dh $@ --buildsystem=meson
 
 
 # dh_make generated override targets.
@@ -61,22 +71,35 @@ conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure
 override_dh_auto_configure:
 	meson setup $(conf_flags) ${BUILDDIR}
 
-#override_dh_auto_build:
+
+override_dh_auto_build:
+#	echo "AUTO BUILD"
+	#dh_auto_build
+	LC_ALL=C.UTF-8 ninja -j1 -v -C ${BUILDDIR}
+	/build/scripts/build-rs.sh
+
 #	ninja -C ${BUILDDIR}
 
-#override_dh_auto_install:
-#	DESTDIR=$(CURDIR)/debian/tmp  meson install  -C ${BUILDDIR}
+override_dh_auto_install:
+#	dh_install
+#	#/build/scripts/install-rs.sh
+	DESTDIR=$(CURDIR)/debian/gstreamer1.0 meson install  -C ${BUILDDIR}
+	/build/scripts/install-rs.sh
+#	#DESTDIR=$(CURDIR)/debian/tmp  meson install  -C ${BUILDDIR}
 
 #override_dh_install:
 #	dh_install --sourcedir=debian/tmp
 # Add --fail-missing option after adding *.install files for all subpackages.
 
-override_dh_auto_clean:
-	echo "Clean"
+#override_dh_auto_clean:
+#	echo "Clean"
 #	rm -rf ${BUILDDIR}
 
-override_dh_clean:
-	dh_clean $@
+#override_dh_clean:
+#	#dh_clean $@
+
+#override_dh_prep:
+#	#dh_prep
 
 override_dh_auto_test:
 	dh_auto_test || true
@@ -85,4 +108,6 @@ override_dh_installdocs-arch:
 	#dont install
 
 override_dh_shlibdeps:
-	dh_shlibdeps -l/opt/gstreamer/lib -l$(shell pwd)/debian/gstreamer1.0/opt/gstreamer/lib --dpkg-shlibdeps-params=--ignore-missing-info 
+	#
+	
+	dh_shlibdeps -l$(shell pwd)/debian/gstreamer1.0/opt/gstreamer/lib --dpkg-shlibdeps-params=--ignore-missing-info 
