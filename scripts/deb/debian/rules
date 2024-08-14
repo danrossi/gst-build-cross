@@ -34,16 +34,16 @@ DISTRO = "$(shell dpkg-vendor --query vendor)"
 
 
 #conf_flags = --libexecdir=lib/$(DEB_HOST_MULTIARCH)/gstreamer1.0
-conf_flags = -Dpackage-name=$(GST_PACKAGE_NAME) --buildtype=release --strip
-conf_flags += --pkgconfig.relocatable --prefix=/opt/gstreamer -Dlibdir=lib
-conf_flags += -Ddoc=disabled -Dexamples=disabled
-conf_flags += -Dgst-full-libraries=app,video,player -Dwebrtc=enabled -Drtsp_server=disabled
-conf_flags += -Dlibav=disabled -Dges=disabled -Dpython=enabled -Dgpl=enabled
-conf_flags += -Dqt5=disabled -Dqt6=disabled -Dtests=disabled -Dgtk_doc=disabled
-conf_flags += -Dgstreamer:examples=disabled -Dgstreamer:tests=disabled -Dgstreamer:doc=disabled
-conf_flags += -Dgst-plugins-base:examples=disabled
-conf_flags += -Dgst-plugins-bad:magicleap=disabled
-conf_flags += -Dgst-plugins-good:examples=disabled 
+#conf_flags = -Dpackage-name=$(GST_PACKAGE_NAME) --buildtype=release --strip
+#conf_flags += --pkgconfig.relocatable --prefix=/opt/gstreamer -Dlibdir=lib
+#conf_flags += -Ddoc=disabled -Dexamples=disabled
+#conf_flags += -Dgst-full-libraries=app,video,player -Dwebrtc=enabled -Drtsp_server=disabled
+#conf_flags += -Dlibav=disabled -Dges=disabled -Dpython=enabled -Dgpl=enabled
+#conf_flags += -Dqt5=disabled -Dqt6=disabled -Dtests=disabled -Dgtk_doc=disabled
+#conf_flags += -Dgstreamer:examples=disabled -Dgstreamer:tests=disabled -Dgstreamer:doc=disabled
+#conf_flags += -Dgst-plugins-base:examples=disabled
+#conf_flags += -Dgst-plugins-bad:magicleap=disabled
+#conf_flags += -Dgst-plugins-good:examples=disabled 
 
 RECONFIGURE=""
 
@@ -64,13 +64,15 @@ RECONFIGURE=""
 
 
 override_dh_auto_configure:
-	if [ -d ${BUILDDIR} ]; then RECONFIGURE=" --reconfigure"; fi
+	/build/scripts/configure-gst.sh $(CURDIR) ${BUILDDIR}
 
-	meson setup $(conf_flags) ${RECONFIGURE} ${BUILDDIR}
+	#if [ -d ${BUILDDIR} ]; then RECONFIGURE=" --reconfigure"; fi
+
+	#meson setup $(conf_flags) ${RECONFIGURE} ${BUILDDIR}
 
 
 override_dh_auto_build:
-	LC_ALL=C.UTF-8 ninja -j1 -v -C ${BUILDDIR}
+	/build/scripts/build-gst.sh $(CURDIR) ${BUILDDIR}
 	/build/scripts/build-rs.sh ${BUILDDIR} $(CURDIR)
 
 override_dh_auto_install:

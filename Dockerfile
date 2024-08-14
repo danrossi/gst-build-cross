@@ -97,14 +97,20 @@ printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 COPY scripts/deb/debian/ /tmp/debian/
-
+COPY scripts/configure-gst.sh /tmp/gstreamer
+COPY scripts/build-gst.sh /tmp/gstreamer
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
       git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
       cd gstreamer && \ 
       meson wrap install openssl && \
-      meson subprojects download >/dev/null
+      /tmp/gstreamer/configure-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build && \
+      /tmp/gstreamer/build-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build  && \
+      rm -rf /tmp/gstreamer
+
+
+      #meson subprojects download >/dev/null
 
 RUN cd $HOME/build/gstreamer && \
     cp -R /tmp/debian ./ && \
