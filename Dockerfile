@@ -46,6 +46,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       build-essential \
       devscripts \
       debhelper \
+      dh-sequence-python3 \
       dh-make \
       bison \
       flex \
@@ -82,6 +83,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       rm -rf /var/lib/apt/lists/* && \
       pip3 install \
       --break-system-packages \
+      --force-reinstall \
       meson \
       pytest \
       distro
@@ -94,7 +96,7 @@ echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc 
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
-ADD scripts/deb/debian /tmp/
+COPY scripts/deb/debian/ /tmp/debian/
 
 
 RUN mkdir $HOME/build && \
@@ -102,10 +104,12 @@ RUN mkdir $HOME/build && \
       git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
       cd gstreamer && \ 
       meson wrap install openssl && \
-      meson subprojects download && \
-      cp -R /tmp/debian ./ && \
+      meson subprojects download >/dev/null
+
+RUN cd $HOME/build/gstreamer && \
+    cp -R /tmp/debian ./ && \
       rm -rf /tmp/debian
-      #meson subprojects update
+
 
 
 

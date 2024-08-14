@@ -43,8 +43,9 @@ conf_flags += -Dqt5=disabled -Dqt6=disabled -Dtests=disabled -Dgtk_doc=disabled
 conf_flags += -Dgstreamer:examples=disabled -Dgstreamer:tests=disabled -Dgstreamer:doc=disabled
 conf_flags += -Dgst-plugins-base:examples=disabled
 conf_flags += -Dgst-plugins-bad:magicleap=disabled
-conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure 
+conf_flags += -Dgst-plugins-good:examples=disabled 
 
+RECONFIGURE=""
 
 
 
@@ -63,7 +64,9 @@ conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure
 
 
 override_dh_auto_configure:
-	meson setup $(conf_flags) ${BUILDDIR}
+	if [ -d ${BUILDDIR} ]; then RECONFIGURE=" --reconfigure"; fi
+
+	meson setup $(conf_flags) ${RECONFIGURE} ${BUILDDIR}
 
 
 override_dh_auto_build:
