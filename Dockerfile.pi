@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM debian:bookworm-slim
+FROM dtcooper/raspberrypi-os:bookworm
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV CARGO_HTTP_DEBUG=true
@@ -15,7 +15,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /build
 # GStreamer needs meson version >= 1.1.
 
-COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
+#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
 RUN --mount=type=cache,target=/var/cache/apt \
     dpkg --add-architecture arm64 && \
@@ -94,8 +94,6 @@ echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc 
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
-ADD scripts/deb/debian /tmp/
-
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
@@ -107,9 +105,6 @@ RUN mkdir $HOME/build && \
       rm -rf /tmp/debian
       #meson subprojects update
 
-
-
-COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
   
   ENTRYPOINT /build/scripts/build.sh
