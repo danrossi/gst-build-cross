@@ -9,15 +9,11 @@ ENV RUSTUP_HOME=/root/.cargo
 ENV PATH=$RUSTUP_HOME/bin:$PATH
 ENV XDG_CACHE_HOME=/build/src/.cache
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-#ENV RUSTFLAGS="-Z threads=8 -C linker=x86_64-linux-gnu-gcc"
 ENV RUSTFLAGS="-Z threads=8"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
-#ENV PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/opt/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH
-#ENV NSS_UNKNOWN_HOME=/home/user
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /build
 # GStreamer needs meson version >= 1.1.
-#$RUN groupadd -r builduser && useradd -r -g builduser builduser
 
 COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 

@@ -14,6 +14,10 @@ export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
 
 
+
+#$(info    HOME is $(HOME))
+#$(info    PATH is $(PATH))
+
 DEB_BUILD_OPTIONS=nocheck
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
@@ -21,10 +25,15 @@ LDFLAGS += -Wl,-z,defs -Wl,-O1
 RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2 -Clinker=${DEB_HOST_MULTIARCH}-gcc
 
 
+#$(info    RUSTFLAGS is $(RUSTFLAGS))
+#$(info    CARGO_HOME is $(CARGO_HOME))
+
+
 # Let's decide the package name and url depending on the distribution
 DISTRO = "$(shell dpkg-vendor --query vendor)"
 
 
+#conf_flags = --libexecdir=lib/$(DEB_HOST_MULTIARCH)/gstreamer1.0
 conf_flags = -Dpackage-name=$(GST_PACKAGE_NAME) --buildtype=release --strip
 conf_flags += --pkgconfig.relocatable --prefix=/opt/gstreamer -Dlibdir=lib
 conf_flags += -Ddoc=disabled -Dexamples=disabled
@@ -52,20 +61,25 @@ conf_flags += -Dgst-plugins-good:examples=disabled --reconfigure
 %:
 	dh $@ --buildsystem=meson
 
+
 override_dh_auto_configure:
 	meson setup $(conf_flags) ${BUILDDIR}
 
 
 override_dh_auto_build:
-	#dh_auto_build
 	LC_ALL=C.UTF-8 ninja -j1 -v -C ${BUILDDIR}
-	/build/scripts/build-rs.sh
+	/build/scripts/build-rs.sh ${BUILDDIR} $(CURDIR)
 
 override_dh_auto_install:
-	DESTDIR=$(CURDIR)/debian/gstreamer1.0 meson install  -C ${BUILDDIR}
-	/build/scripts/install-rs.sh
+	DESTDIR=$(CURDIR)/debian/gstreamer1.0
+	meson install  -C ${BUILDDIR}
+# build and install the rust plugins
+	/build/scripts/install-rs.sh ${BUILDDIR} ${DESTDIR} $(CURDIR)
 	mkdir -p ${DESTDIR}/etc/
+# copy the environment script
 	cp -R /build/scripts/profile.d ${DESTDIR}/etc/
+
+
 
 override_dh_auto_test:
 	dh_auto_test || true
