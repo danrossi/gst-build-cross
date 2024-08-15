@@ -107,6 +107,7 @@ RUN mkdir $HOME/build && \
       meson wrap install openssl && \
       /tmp/gstreamer/configure-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build && \
       /tmp/gstreamer/build-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build  && \
+      rm -rf $HOME/build/gstreamer/build && \
       rm -rf /tmp/gstreamer
 
 
