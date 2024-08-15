@@ -17,13 +17,14 @@ export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
 
 #$(info    HOME is $(HOME))
 #$(info    PATH is $(PATH))
-
-DEB_BUILD_OPTIONS=nocheck
+DEB_BUILD_OPTIONS="lang=en-US ccache nocheck parallel=4"
+#DEB_BUILD_OPTIONS=nocheck
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
+#LDFLAGS += -ldl -Wl,-z,defs -Wl,-O1 -lpython3.11 -L/lib/x86_64-linux-gnu
 LDFLAGS += -Wl,-z,defs -Wl,-O1
+LIBS=-lpython3.11
 RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2 -Clinker=${DEB_HOST_MULTIARCH}-gcc
-
 
 #$(info    RUSTFLAGS is $(RUSTFLAGS))
 #$(info    CARGO_HOME is $(CARGO_HOME))
@@ -50,7 +51,7 @@ RECONFIGURE=""
 
 
 # See FEATURE AREAS in dpkg-buildflags(1).
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 # See ENVIRONMENT in dpkg-buildflags(1).
 # Package maintainers to append CFLAGS.
@@ -60,7 +61,7 @@ RECONFIGURE=""
 
 
 %:
-	dh $@ --buildsystem=meson
+	dh $@ --with python3 --buildsystem=meson
 
 
 override_dh_auto_configure:

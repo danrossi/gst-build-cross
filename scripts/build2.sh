@@ -1,13 +1,6 @@
 #!/bin/sh
-CURDIR=${1:-$HOME/build/gstreamer}
-DEB_HOST_MULTIARCH=`echo $(dpkg-architecture -qDEB_HOST_MULTIARCH)`
-RECONFIGURE=""
-BUILDDIR=${2:-${CURDIR}/build-${DEB_HOST_MULTIARCH}}
 
-
-if [ -d ${BUILDDIR} ]; then RECONFIGURE=" --reconfigure"; fi
-
-cd ${CURDIR} && \
+cd $HOME/build/gstreamer && \
 git pull && \
 #meson subprojects update && \
 meson setup \
@@ -41,4 +34,9 @@ meson setup \
   -Dorc:gtk_doc=disabled \
   -Dorc:tests=disabled \
   --reconfigure \
- ${BUILDDIR}
+  build-x86_64-linux-gnu && \
+  ninja -C build-x86_64-linux-gnu 
+  #ninja -C build-x86_64-linux-gnu && \
+  #meson install --no-rebuild --only-changed -C build-x86_64-linux-gnu/ && \
+  #cd subprojects/gst-plugins-rs/net/webrtchttp && \
+  #LD_LIBRARY_PATH=$HOME/build/gstreamer/build-x86_64-linux-gnu/subprojects/gstreamer/gst PKG_CONFIG_PATH=$HOME/build/gstreamer/build-x86_64-linux-gnu/meson-uninstalled cargo +nightly cinstall -r --prefix=/opt/gstreamer --libdir=lib --destdir=$HOME/build/gstreamer/debian/gstreamer1.0 -p gst-plugin-webrtchttp
