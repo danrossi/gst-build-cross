@@ -98,8 +98,8 @@ printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 
 COPY scripts/deb/debian /root/
-COPY scripts/configure-gst.sh /tmp/gstreamer
-COPY scripts/build-gst.sh /tmp/gstreamer
+COPY scripts/configure-gst.sh /tmp/gstreamer/
+COPY scripts/build-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \

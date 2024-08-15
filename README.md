@@ -16,6 +16,8 @@ fsutil.exe file setCaseSensitiveInfo  D:\path\to\mount
 
 It attempts to build and package a custom gstreamer into a deb package which can be used for installing into a prefix of `/opt/gstreamer`
 
+An initial build of gstreamer is required first or pychairo complains about missing libpython links during a deb package build. Which is in the standard lib location. It's possibly stripping more environment variables.
+
 #Building the image
 
 ```

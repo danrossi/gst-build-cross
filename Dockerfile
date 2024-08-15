@@ -97,8 +97,8 @@ printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 COPY scripts/deb/debian/ /tmp/debian/
-COPY scripts/configure-gst.sh /tmp/gstreamer
-COPY scripts/build-gst.sh /tmp/gstreamer
+COPY scripts/configure-gst.sh /tmp/gstreamer/
+COPY scripts/build-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
@@ -118,9 +118,7 @@ RUN cd $HOME/build/gstreamer && \
       rm -rf /tmp/debian
 
 
-
-
 COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
   
-  ENTRYPOINT /build/scripts/build.sh
+ENTRYPOINT /build/scripts/entrypoint.sh
