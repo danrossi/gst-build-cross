@@ -1,6 +1,7 @@
 #!/bin/sh
 
-cd $HOME/build/gstreamer
+cd $HOME/build/gstreamer &&
+build.sh &&
 debuild \
 --preserve-envvar=PATH \
 --preserve-envvar=CCACHE_DIR \

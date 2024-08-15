@@ -15,6 +15,7 @@ meson setup \
   -Drtsp_server=disabled \
   -Dlibav=disabled \
   -Dges=disabled \
+  -Dintrospection=enabled \
   -Dpython=enabled \
   -Dgpl=enabled \
   -Drs=disabled \
