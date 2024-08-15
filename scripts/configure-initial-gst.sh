@@ -1,10 +1,9 @@
 #!/bin/sh
-BASEDIR=${1:-$HOME/build/gstreamer}
+CONF_BASEDIR=${1:-$HOME/build/gstreamer}
 DEB_HOST_MULTIARCH=`echo $(dpkg-architecture -qDEB_HOST_MULTIARCH)`
-RECONFIGURE=""
-BUILDDIR=${2:-build-${DEB_HOST_MULTIARCH}}
+CONF_BUILDDIR=${2:-build-${DEB_HOST_MULTIARCH}}
 
-cd ${BASEDIR} && \
+cd ${CONF_BASEDIR} && \
 git pull && \
 #meson subprojects update && \
 meson setup \
@@ -38,4 +37,4 @@ meson setup \
   -Dorc:examples=disabled \
   -Dorc:gtk_doc=disabled \
   -Dorc:tests=disabled \
- ${BUILDDIR}
+ ${CONF_BUILDDIR}

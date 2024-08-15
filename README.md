@@ -39,7 +39,7 @@ An initial build of gstreamer is required first while creating the Docker image 
 For now in docker it can be manually built with this command
 
 ```
-/build/scripts/build.sh
+build.sh
 ```
 
 #Packaging the build
@@ -47,7 +47,7 @@ For now in docker it can be manually built with this command
 To run a debian package build that automates the whole meson configure, install process
 
 ```
-/build/scripts/build-package.sh
+build-package
 ```
 
 #Fixing subprojects errors
@@ -57,3 +57,11 @@ Wierd conflict errors show so subprojects may need to be purged
 ```
 /build/scripts/purge_subprojects.sh
 ``
+
+#Installing Package
+
+Inside the dist directory is an install script and the deb package to install. It will prepare a few depencies required.
+
+```
+./install.sh
+```

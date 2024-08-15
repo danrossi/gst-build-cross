@@ -13,4 +13,3 @@ debuild \
 --prepend-path=/usr/lib/ccache -uc -us -b
 
 cp $HOME/build/*.deb /build/dist/
-cp $HOME/build/*.dsc /build/dist/

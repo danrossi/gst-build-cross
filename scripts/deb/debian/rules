@@ -13,11 +13,15 @@ export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 #export HOME=$(CURDIR)/fake-HOME
 export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
 
+PKG_DESTDIR=$(CURDIR)/debian/gstreamer1.0
+
+export DESTDIR=${PKG_DESTDIR}
 
 
+#$(info  DESTDIR is $(DESTDIR))
 #$(info    HOME is $(HOME))
 #$(info    PATH is $(PATH))
-DEB_BUILD_OPTIONS="lang=en-US ccache nocheck parallel=4"
+DEB_BUILD_OPTIONS="lang=en-US ccache nocheck noddebs parallel=4"
 #DEB_BUILD_OPTIONS=nocheck
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
@@ -67,23 +71,17 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 override_dh_auto_configure:
 	/build/scripts/configure-gst.sh $(CURDIR) ${BUILDDIR}
 
-	#if [ -d ${BUILDDIR} ]; then RECONFIGURE=" --reconfigure"; fi
-
-	#meson setup $(conf_flags) ${RECONFIGURE} ${BUILDDIR}
-
-
 override_dh_auto_build:
 	/build/scripts/build-gst.sh $(CURDIR) ${BUILDDIR}
 	/build/scripts/build-rs.sh ${BUILDDIR} $(CURDIR)
 
 override_dh_auto_install:
-	DESTDIR=$(CURDIR)/debian/gstreamer1.0
-	meson install  -C ${BUILDDIR}
+	meson install --destdir ${PKG_DESTDIR}  -C ${BUILDDIR}
 # build and install the rust plugins
-	/build/scripts/install-rs.sh ${BUILDDIR} ${DESTDIR} $(CURDIR)
-	mkdir -p ${DESTDIR}/etc/
+	/build/scripts/install-rs.sh ${BUILDDIR} ${PKG_DESTDIR} $(CURDIR)
+	mkdir -p ${PKG_DESTDIR}/etc/
 # copy the environment script
-	cp -R /build/scripts/profile.d ${DESTDIR}/etc/
+	cp -R /build/scripts/profile.d ${PKG_DESTDIR}/etc/
 
 
 

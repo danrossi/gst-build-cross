@@ -19,7 +19,10 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        rm /etc/profile.d/gstreamer-env.sh
+        PROFILE_FILE="/etc/profile.d/gstreamer-env.sh"
+        if [ -f "$PROFILE_FILE" ] ; then
+            rm "$PROFILE_FILE"
+        fi
     ;;
 
     failed-upgrade)
