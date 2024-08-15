@@ -98,23 +98,14 @@ printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 COPY scripts/deb/debian/ /tmp/debian/
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
-#COPY scripts/configure-gst.sh /tmp/gstreamer/
-#COPY scripts/build-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
       git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
       cd gstreamer && \ 
-      #meson wrap install openssl
       meson wrap install openssl && \
       /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
-      #/tmp/gstreamer/configure-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build && \
-      #/tmp/gstreamer/build-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build  && \
-      #rm -rf $HOME/build/gstreamer/build && \
       rm -rf /tmp/gstreamer
-
-
-      #meson subprojects download >/dev/null
 
 RUN cd $HOME/build/gstreamer && \
     cp -R /tmp/debian ./ && \

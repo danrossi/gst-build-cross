@@ -6,8 +6,8 @@ ENV CARGO_HTTP_DEBUG=true
 ENV CARGO_LOG=cargo::ops::registry=debug
 ENV CARGO_HOME=/root/.cargo
 ENV RUSTUP_HOME=/root/.cargo
-ENV PATH=$RUSTUP_HOME/bin:$PATH
-ENV XDG_CACHE_HOME=/build/src/.cache
+ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
+#ENV XDG_CACHE_HOME=/build/src/.cache
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 ENV RUSTFLAGS="-Z threads=8"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
@@ -97,18 +97,21 @@ printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 
-COPY scripts/deb/debian /root/
-COPY scripts/configure-gst.sh /tmp/gstreamer/
-COPY scripts/build-gst.sh /tmp/gstreamer/
+COPY scripts/deb/debian/ /tmp/debian/
+COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
       git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
       cd gstreamer && \ 
       meson wrap install openssl && \
-      /tmp/gstreamer/configure-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build && \
-      /tmp/gstreamer/build-gst.sh $HOME/build/gstreamer $HOME/build/gstreamer/build  && \
+      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
       rm -rf /tmp/gstreamer
+
+RUN cd $HOME/build/gstreamer && \
+    cp -R /tmp/debian ./ && \
+      rm -rf /tmp/debian
+
 
 RUN cd $HOME/build/gstreamer && \
     cp -R $HOME/debian ./ && \
@@ -116,4 +119,4 @@ RUN cd $HOME/build/gstreamer && \
 
 
   
-  ENTRYPOINT /build/scripts/build.sh
+ENTRYPOINT /build/scripts/entrypoint.sh
