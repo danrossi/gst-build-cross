@@ -8,4 +8,4 @@ export PKG_CONFIG_PATH=/opt/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=/opt/gstreamer/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=/opt/gstreamer/lib/python3/dist-packages:$PYTHONPATH
 export _GI_OVERRIDES_PATH=/opt/gstreamer/lib/python3/dist-packages/gi/overrides
-export PATH=/opt/gstreamer/bin:$PATH
+export PATH=/opt/gstreamer/bin:"${PATH}"

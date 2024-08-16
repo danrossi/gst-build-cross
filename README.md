@@ -44,11 +44,13 @@ build.sh
 
 #Packaging the build
 
-To run a debian package build that automates the whole meson configure, install process
+To run a debian package build that automates the whole meson configure, install process.
 
 ```
 build-package
 ```
+
+This is run automatically from the Docker entrypoint script `entrypoint.sh` when launching a container.
 
 #Fixing subprojects errors
 
