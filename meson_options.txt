@@ -1,0 +1,72 @@
+# Same order as members in Cargo.toml
+
+# audio
+option('audiofx', type: 'feature', value: 'disabled', description: 'Build audiofx plugin')
+option('claxon', type: 'feature', value: 'disabled', description: 'Build claxon plugin')
+option('csound', type: 'feature', value: 'disabled', description: 'Build csound plugin')
+option('lewton', type: 'feature', value: 'disabled', description: 'Build lewton plugin')
+option('spotify', type: 'feature', value: 'disabled', description: 'Build spotify plugin')
+
+# generic
+option('file', type: 'feature', value: 'disabled', description: 'Build file plugin')
+option('originalbuffer', type: 'feature', value: 'disabled', description: 'Build originalbuffer plugin')
+option('gopbuffer', type: 'feature', value: 'disabled', description: 'Build gopbuffer plugin')
+option('sodium', type: 'feature', value: 'disabled', description: 'Build sodium plugin')
+option('sodium-source', type: 'combo',
+       choices: ['system', 'built-in'], value: 'built-in',
+       description: 'Whether to use libsodium from the system or the built-in version from the sodiumoxide crate')
+option('threadshare', type: 'feature', value: 'disabled', description: 'Build threadshare plugin')
+option('inter', type: 'feature', value: 'disabled', description: 'Build inter plugin')
+
+# mux
+option('flavors', type: 'feature', value: 'disabled', description: 'Build flavors plugin')
+option('fmp4', type: 'feature', value: 'disabled', description: 'Build fmp4 plugin')
+option('mp4', type: 'feature', value: 'disabled', description: 'Build mp4 plugin')
+
+# net
+option('aws', type: 'feature', value: 'disabled', description: 'Build aws plugin')
+option('hlssink3', type: 'feature', value: 'disabled', description: 'Build hlssink3 plugin')
+option('mpegtslive', type: 'feature', value: 'disabled', description: 'Build mpegtslive plugin')
+option('ndi', type: 'feature', value: 'disabled', description: 'Build ndi plugin')
+option('onvif', type: 'feature', value: 'disabled', description: 'Build onvif plugin')
+option('raptorq', type: 'feature', value: 'disabled', description: 'Build raptorq plugin')
+option('reqwest', type: 'feature', value: 'disabled', description: 'Build reqwest plugin')
+option('rtsp', type: 'feature', value: 'disabled', description: 'Build rtsp plugin')
+option('rtp', type: 'feature', value: 'auto', description: 'Build rtp plugin')
+option('webrtc', type: 'feature', value: 'auto', yield: true, description: 'Build webrtc plugin')
+option('webrtchttp', type: 'feature', value: 'auto', description: 'Build webrtchttp plugin')
+option('quinn', type: 'feature', value: 'disabled', description: 'Build quinn plugin')
+
+# text
+option('textahead', type: 'feature', value: 'disabled', description: 'Build textahead plugin')
+option('json', type: 'feature', value: 'disabled', description: 'Build json plugin')
+option('regex', type: 'feature', value: 'disabled', description: 'Build regex plugin')
+option('textwrap', type: 'feature', value: 'disabled', description: 'Build textwrap plugin')
+
+# utils
+option('fallbackswitch', type: 'feature', value: 'disabled', description: 'Build fallbackswitch plugin')
+option('livesync', type: 'feature', value: 'disabled', description: 'Build livesync plugin')
+option('togglerecord', type: 'feature', value: 'disabled', description: 'Build togglerecord plugin')
+option('tracers', type: 'feature', value: 'disabled', description: 'Build tracers plugin')
+option('uriplaylistbin', type: 'feature', value: 'disabled', description: 'Build uriplaylistbin plugin')
+
+# video
+option('cdg', type: 'feature', value: 'disabled', description: 'Build cdg plugin')
+option('closedcaption', type: 'feature', value: 'disabled', description: 'Build closedcaption plugin')
+option('dav1d', type: 'feature', value: 'disabled', description: 'Build dav1d plugin')
+option('ffv1', type: 'feature', value: 'disabled', description: 'Build ffv1 plugin')
+option('gif', type: 'feature', value: 'disabled', description: 'Build gif plugin')
+option('gtk4', type: 'feature', value: 'disabled', description: 'Build GTK4 plugin')
+option('hsv', type: 'feature', value: 'disabled', description: 'Build hsv plugin')
+option('png', type: 'feature', value: 'disabled', description: 'Build png plugin')
+option('rav1e', type: 'feature', value: 'disabled', description: 'Build rav1e plugin')
+option('videofx', type: 'feature', value: 'disabled', description: 'Build videofx plugin')
+option('webp', type: 'feature', value: 'disabled', description: 'Build webp plugin')
+
+# Common options
+option('doc', type: 'feature', value: 'disabled', yield: true,
+       description: 'Enable documentation')
+option('examples', type: 'feature', value: 'disabled', yield: true,
+       description: 'Build examples')
+option('tests', type : 'feature', value : 'disabled', yield : true,
+       description : 'Build and enable unit tests')

@@ -25,6 +25,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt install -y \
       --no-install-recommends \
       ccache \
+      libglfw3-dev \
+      libgles2-mesa-dev \
+      libdrm-dev \
       libssl-dev \
       libogg-dev \
       libpng-dev \
@@ -68,14 +71,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
       libcairo2-dev \
       libogg-dev \
       libopus-dev \
-      libsrt-openssl-dev \
       openssl \
       curl \
       nano && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
       pip3 install \
-      --break-system-packages \
       --force-reinstall \
       meson \
       pytest \
@@ -89,13 +90,15 @@ echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc 
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
-COPY scripts/deb/debian/ /tmp/debian/
+COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+COPY scripts/deb/ubuntu/control /tmp/debian/
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
     cd $HOME/build && \
       git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
-      cd gstreamer && \ 
+      cd gstreamer && \
+      #meson wrap install openssl 
       meson wrap install openssl && \
       /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
       rm -rf /tmp/gstreamer

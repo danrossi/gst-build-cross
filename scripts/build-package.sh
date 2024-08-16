@@ -1,5 +1,8 @@
 #!/bin/sh
 
+. /etc/os-release
+mkdir -p /build/dist/${NAME}/${VERSION_CODENAME}
+
 cd $HOME/build/gstreamer && \
 #build.sh &&
 debuild \
@@ -12,4 +15,4 @@ debuild \
 --preserve-envvar=PY_LIB_FNAME \
 --prepend-path=/usr/lib/ccache -uc -us -b
 
-cp $HOME/build/*.deb /build/dist/
+cp $HOME/build/*.deb /build/dist/${NAME}/${VERSION_CODENAME}/

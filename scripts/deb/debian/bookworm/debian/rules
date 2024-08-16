@@ -4,12 +4,16 @@
 # Output every command that modifies files on the build system.
 export DH_VERBOSE = 1
 
-GST_PACKAGE_NAME := "GStreamer (Debian)"
+export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+
+DISTRO = "$(shell dpkg-vendor --query vendor)"
+
+GST_PACKAGE_NAME := "GStreamer (${DISTRO} ${DEB_HOST_ARCH})"
 
 
 export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 export BUILDDIR=build-${DEB_HOST_MULTIARCH}
-export DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+
 #export HOME=$(CURDIR)/fake-HOME
 export DEB_DH_SHLIBDEPS_ARGS_ALL=--dpkg-shlibdeps-params=--ignore-missing-info
 
@@ -35,7 +39,7 @@ RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2 -Clinker=${DEB_HOST_MULTIARCH}-gcc
 
 
 # Let's decide the package name and url depending on the distribution
-DISTRO = "$(shell dpkg-vendor --query vendor)"
+
 
 
 #conf_flags = --libexecdir=lib/$(DEB_HOST_MULTIARCH)/gstreamer1.0

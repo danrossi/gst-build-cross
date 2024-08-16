@@ -96,7 +96,7 @@ echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc 
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
-COPY scripts/deb/debian/ /tmp/debian/
+COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \
