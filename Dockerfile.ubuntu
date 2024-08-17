@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM ubuntu:focal
+FROM ubuntu:noble
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV CARGO_HTTP_DEBUG=true
@@ -67,6 +67,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
       meson \
       python3-pip \
       python3-venv \
+      python3-pytest \
+      python3-distro \
       python3-all-dev \
       libcairo2-dev \
       libogg-dev \
@@ -77,10 +79,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
       pip3 install \
+      --break-system-packages \
       --force-reinstall \
-      meson \
-      pytest \
-      distro
+      meson
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
 rustup toolchain install nightly && \
@@ -91,7 +92,7 @@ printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
 COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
-COPY scripts/deb/ubuntu/control /tmp/debian/
+#COPY scripts/deb/ubuntu/control /tmp/debian/
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 RUN mkdir $HOME/build && \

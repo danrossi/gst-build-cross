@@ -11,6 +11,9 @@ case "$1" in
   run)
     docker run -dit --net=host -v ${PWD}:${WORKDIR}:z --workdir ${WORKDIR} ${REPO}/${IMAGE}:${VERSION} /bin/bash
     ;;
+  runpi)
+    docker run -dit --net=host -p 5022:5022 -v ${PWD}:${WORKDIR}:z --workdir ${WORKDIR} ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
+    ;;
   build)
     docker build --tag ${REPO}/${IMAGE}:${VERSION} --file Dockerfile .
     ;;

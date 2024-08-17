@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM dtcooper/raspberrypi-os:bookworm
+FROM ghcr.io/carlosperate/qemu-rpi-os-lite:bullseye-latest
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV CARGO_HTTP_DEBUG=true
@@ -18,10 +18,6 @@ WORKDIR /build
 #COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
 RUN --mount=type=cache,target=/var/cache/apt \
-    dpkg --add-architecture arm64 && \
-    apt update && \
-    apt install -y  dbus-system-bus-common && \
-    dpkg --configure -a && \ 
     apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
     apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
     apt remove -y gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 libgstreamer* && \
@@ -32,7 +28,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
       gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
@@ -119,4 +114,4 @@ RUN cd $HOME/build/gstreamer && \
 
 
   
-ENTRYPOINT /build/scripts/entrypoint.sh
+#ENTRYPOINT /build/scripts/entrypoint.sh

@@ -16,6 +16,15 @@ Run the scripts like so
 ```
 ./whep.sh
 ```
+
+# Run the python test
+
+```
+sudo apt install python3 python3-pip
+python3 -m pip install pipenv
+cd tests
+pipenv shell
+```
 ```
 ./whep.py
 ```
