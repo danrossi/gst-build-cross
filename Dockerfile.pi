@@ -87,8 +87,9 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.ca
       pytest \
       distro
 
-RUN printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
-printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
+RUN  mkdir -p $CARGO_HOME && \
+printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml"
 
 #RUN --mount=type=cache,target=/root/.cargo \
 #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target aarch64-unknown-linux-gnu && \
