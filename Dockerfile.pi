@@ -18,7 +18,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
-RUN --mount=type=cache,target=/var/cache/apt \
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.cargo \
     apt update && \
     apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
     apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
@@ -75,6 +75,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
       libsrt-openssl-dev \
       openssl \
       curl \
+      rustc \
+      cargo-c \
       nano && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
@@ -85,13 +87,18 @@ RUN --mount=type=cache,target=/var/cache/apt \
       pytest \
       distro
 
-RUN --mount=type=cache,target=/root/.cargo \
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target stable-aarch64-unknown-linux-gnu && \
-. "$HOME/.cargo/env" && \
-echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc && \
-. $HOME/.bashrc && \
-printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+RUN printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
-rustup toolchain install nightly && \
-rustup default nightly && \
-cargo +nightly install cargo-c
+
+#RUN --mount=type=cache,target=/root/.cargo \
+#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target aarch64-unknown-linux-gnu && \
+#. "$HOME/.cargo/env" && \
+#echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc && \
+#. $HOME/.bashrc && \
+#printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+#printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
+#rustup toolchain install nightly && \
+#rustup default nightly
+#rustup default nightly && \
+
+#cargo +nightly install cargo-c
