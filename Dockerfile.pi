@@ -76,8 +76,9 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.ca
       libsrt-openssl-dev \
       openssl \
       curl \
-      rustc \
-      cargo-c \
+      #rustc \
+      #cargo \
+      #cargo-c \
       nano && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
@@ -92,28 +93,28 @@ RUN  mkdir -p $CARGO_HOME && \
 printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml"
 
-#RUN --mount=type=cache,target=/root/.cargo \
-#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target aarch64-unknown-linux-gnu && \
-#. "$HOME/.cargo/env" && \
-#echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc && \
-#. $HOME/.bashrc && \
-#printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
-#printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
-#rustup toolchain install nightly && \
+RUN --mount=type=cache,target=/root/.cargo \
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target aarch64-unknown-linux-gnu && \
+. "$HOME/.cargo/env" && \
+echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc && \
+. $HOME/.bashrc && \
+printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
+rustup toolchain install nightly && \
 #rustup default nightly
-#rustup default nightly && \
+rustup default nightly
 
-#cargo +nightly install cargo-c
+RUN --mount=type=cache,target=/root/.cargo cargo +nightly install cargo-c
 
-#COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
-#COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 #RUN mkdir $HOME/build && \
 #    cd $HOME/build && \
 #      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
 #      cd gstreamer && \ 
 #      meson wrap install openssl && \
-  #    /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+#      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
 #      rm -rf /tmp/gstreamer
 
 #RUN cd $HOME/build/gstreamer && \
