@@ -1,7 +1,22 @@
+# syntax = docker/dockerfile:1.2
+
 FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
 FROM arm64v8/debian:bookworm-slim
-COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV CARGO_HTTP_DEBUG=true
+ENV CARGO_LOG=cargo::ops::registry=debug
+ENV CARGO_HOME=/root/.cargo
+ENV RUSTUP_HOME=/root/.cargo
+ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
+#ENV XDG_CACHE_HOME=/build/src/.cache
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+ENV RUSTFLAGS="-Z threads=1"
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+ARG DEBIAN_FRONTEND=noninteractive
+
+COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 RUN --mount=type=cache,target=/var/cache/apt \
     apt update && \
@@ -69,3 +84,14 @@ RUN --mount=type=cache,target=/var/cache/apt \
       meson \
       pytest \
       distro
+
+RUN --mount=type=cache,target=/root/.cargo \
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target stable-aarch64-unknown-linux-gnu && \
+. "$HOME/.cargo/env" && \
+echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc && \
+. $HOME/.bashrc && \
+printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
+rustup toolchain install nightly && \
+rustup default nightly && \
+cargo +nightly install cargo-c

@@ -1,3 +1,0 @@
-[submodule "rpi-os-custom-image"]
-	path = rpi-os-custom-image
-	url = https://github.com/carlosperate/rpi-os-custom-image.git
