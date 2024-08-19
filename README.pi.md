@@ -1,0 +1,35 @@
+#Gtreamer Build Cross Environment PI Image
+
+After many failed attempts to find projects that work with bookworm and arm64 for PI and not broken. I found a solution that works with Docker.
+
+
+
+These packages may be required first.
+
+```
+apt install systemd-container qemu-utils binfmt-support qemu-user-static
+```
+
+Not sure yet if this command is required on the host before running the PI image.
+
+```
+docker run -it --rm --privileged multiarch/qemu-user-static --credential yes --persistent yes
+```
+
+This will build the required arm64 Debian Bookworm image primed with qemu-user-static and the required packages for building Gstreamer.
+
+```
+./docker.sh buildpi
+```
+
+Confirmation qemu-user-static priming is working. It should show it's arm64.
+
+```
+../docker.sh checkpi
+```
+
+```
+docker run  --platform linux/arm64 -it --rm arm64v8/debian:bookworm-slim uname -m
+```
+
+More info https://martin-grigorov.medium.com/building-linux-packages-for-different-cpu-architectures-with-docker-and-qemu-d29e4ebc9fa5

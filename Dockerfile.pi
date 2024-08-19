@@ -1,23 +1,10 @@
-# syntax = docker/dockerfile:1.2
-FROM ghcr.io/carlosperate/qemu-rpi-os-lite:bullseye-latest
-ENV LANG=C.UTF-8
-ENV LC_ALL=C.UTF-8
-ENV CARGO_HTTP_DEBUG=true
-ENV CARGO_LOG=cargo::ops::registry=debug
-ENV CARGO_HOME=/root/.cargo
-ENV RUSTUP_HOME=/root/.cargo
-ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
-#ENV XDG_CACHE_HOME=/build/src/.cache
-ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-ENV RUSTFLAGS="-Z threads=8"
-ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
-ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /build
-# GStreamer needs meson version >= 1.1.
+FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
+FROM arm64v8/debian:bookworm-slim
+COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
-#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
 RUN --mount=type=cache,target=/var/cache/apt \
+    apt update && \
     apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
     apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
     apt remove -y gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 libgstreamer* && \
@@ -82,36 +69,3 @@ RUN --mount=type=cache,target=/var/cache/apt \
       meson \
       pytest \
       distro
-
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --target x86_64-unknown-linux-gnu && \
-rustup toolchain install nightly && \
-rustup default nightly && \
-cargo +nightly install cargo-c && \
-echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc && \
-printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
-printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
-
-
-COPY scripts/deb/debian/ /tmp/debian/
-COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
-
-RUN mkdir $HOME/build && \
-    cd $HOME/build && \
-      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
-      cd gstreamer && \ 
-      meson wrap install openssl && \
-      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
-      rm -rf /tmp/gstreamer
-
-RUN cd $HOME/build/gstreamer && \
-    cp -R /tmp/debian ./ && \
-      rm -rf /tmp/debian
-
-
-RUN cd $HOME/build/gstreamer && \
-    cp -R $HOME/debian ./ && \
-      rm -rf $HOME/debian
-
-
-  
-#ENTRYPOINT /build/scripts/entrypoint.sh
