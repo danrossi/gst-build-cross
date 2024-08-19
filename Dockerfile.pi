@@ -102,3 +102,18 @@ printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml" && \
 #rustup default nightly && \
 
 #cargo +nightly install cargo-c
+
+COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+
+RUN mkdir $HOME/build && \
+    cd $HOME/build && \
+      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
+      cd gstreamer && \ 
+      meson wrap install openssl && \
+      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+      rm -rf /tmp/gstreamer
+
+RUN cd $HOME/build/gstreamer && \
+    cp -R /tmp/debian ./ && \
+      rm -rf /tmp/debian
