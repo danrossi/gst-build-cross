@@ -1,7 +1,8 @@
 # syntax = docker/dockerfile:1.2
 
-FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
-FROM arm64v8/debian:bookworm-slim
+#FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
+#FROM arm64v8/debian:bookworm-slim
+FROM debian:bookworm-slim
 
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
@@ -16,7 +17,7 @@ ENV RUSTFLAGS="-Z threads=1"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ARG DEBIAN_FRONTEND=noninteractive
 
-COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
+#COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.cargo \
     apt update && \
@@ -104,17 +105,17 @@ printf "\n[build]\njobs = 1" >> "$CARGO_HOME/config.toml"
 
 #cargo +nightly install cargo-c
 
-COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
-COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+#COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+#COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
-RUN mkdir $HOME/build && \
-    cd $HOME/build && \
-      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
-      cd gstreamer && \ 
-      meson wrap install openssl && \
-      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
-      rm -rf /tmp/gstreamer
+#RUN mkdir $HOME/build && \
+#    cd $HOME/build && \
+#      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
+#      cd gstreamer && \ 
+#      meson wrap install openssl && \
+  #    /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+#      rm -rf /tmp/gstreamer
 
-RUN cd $HOME/build/gstreamer && \
-    cp -R /tmp/debian ./ && \
-      rm -rf /tmp/debian
+#RUN cd $HOME/build/gstreamer && \
+#    cp -R /tmp/debian ./ && \
+#      rm -rf /tmp/debian

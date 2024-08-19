@@ -24,7 +24,7 @@ case "$1" in
     docker build --tag ${REPO}/${IMAGE_UBUNTU}:${VERSION} --file Dockerfile.ubuntu .
     ;;
   buildpi)
-    docker build --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
+    docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
     ;;
   *)
     echo "Usage: $0 {run|build}"
