@@ -41,5 +41,5 @@ Run the PI build image which will bring up an emulated shell.
 
 More info 
 
-https://docs.docker.com/build/building/multi-platform/
-https://martin-grigorov.medium.com/building-linux-packages-for-different-cpu-architectures-with-docker-and-qemu-d29e4ebc9fa5
+- https://docs.docker.com/build/building/multi-platform/
+- https://martin-grigorov.medium.com/building-linux-packages-for-different-cpu-architectures-with-docker-and-qemu-d29e4ebc9fa5
