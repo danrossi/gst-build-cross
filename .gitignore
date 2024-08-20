@@ -4,3 +4,4 @@ tests.zip
 dist/debian/bookworm/gstreamer1.0_1.25.0.1_amd64.deb
 dist/ubuntu/noble/gstreamer1.0_1.25.0.1_amd64.deb
 dist/debian.zip
+dist/debian/bookworm/gstreamer1.0_1.25.0.1_arm64.deb
