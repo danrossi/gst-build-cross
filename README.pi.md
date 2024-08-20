@@ -4,17 +4,15 @@ After many failed attempts to find projects that work with bookworm and arm64 fo
 
 
 
-These packages may be required first.
+These packages may be required first. 
 
 ```
 apt install systemd-container qemu-utils binfmt-support qemu-user-static
 ```
 
-Not sure yet if this command is required on the host before running the PI image.
+Linux priming with QEMU without Docker Desktop may be required. 
 
-```
-docker run -it --rm --privileged multiarch/qemu-user-static --credential yes --persistent yes
-```
+https://docs.docker.com/build/building/multi-platform/#qemu
 
 This will build the required arm64 Debian Bookworm image primed with qemu-user-static and the required packages for building Gstreamer.
 
@@ -22,7 +20,8 @@ This will build the required arm64 Debian Bookworm image primed with qemu-user-s
 ./docker.sh buildpi
 ```
 
-    NOTE: Preinstalling Rust for the rust plugins seems to be causing the same SIGINT failure trying to build rust and cargo like when building with GStreamer. Reducing it's jobs and threads might help but doing this within Qemu makes it even slower and resource intensive than it already is. The layer may fail and might help breaking it up into multiple layers. Rust is problematic and extremely bloaty and resource intensive.
+[!NOTE]
+Preinstalling Rust for the rust plugins seems to be causing the same SIGINT failure trying to build rust and cargo like when building with GStreamer. Reducing it's jobs and threads might help but doing this within Qemu makes it even slower and resource intensive than it already is. The layer may fail and might help breaking it up into multiple layers. Rust is problematic and extremely bloaty and resource intensive.
 
 Confirmation qemu-user-static priming is working. It should show it's arm64.
 
@@ -31,7 +30,16 @@ Confirmation qemu-user-static priming is working. It should show it's arm64.
 ```
 
 ```
-docker run  --platform linux/arm64 -it --rm arm64v8/debian:bookworm-slim uname -m
+docker run  --platform linux/arm64 -it --rm danrossi/gstreamer/gst-build-cross-pi uname -m
 ```
 
-More info https://martin-grigorov.medium.com/building-linux-packages-for-different-cpu-architectures-with-docker-and-qemu-d29e4ebc9fa5
+Run the PI build image which will bring up an emulated shell.
+
+```
+./docker.sh runpi
+```
+
+More info 
+
+https://docs.docker.com/build/building/multi-platform/
+https://martin-grigorov.medium.com/building-linux-packages-for-different-cpu-architectures-with-docker-and-qemu-d29e4ebc9fa5

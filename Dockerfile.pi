@@ -101,22 +101,26 @@ echo "alias cargo=\"RUSTFLAGS='-Z threads=1' cargo +nightly\"" >> $HOME/.bashrc 
 printf "\n[net]\ngit-fetch-with-cli = true\n" > "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 1\n\n" >> "$CARGO_HOME/config.toml" && \
 rustup toolchain install nightly && \
-#rustup default nightly
 rustup default nightly
+#rustup default nightly && \
+#cargo +nightly install cargo-c
 
-RUN --mount=type=cache,target=/root/.cargo cargo +nightly install cargo-c
+RUN --mount=type=cache,target=/root/.cargo \
+cargo +nightly install cargo-c
 
 COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
-#RUN mkdir $HOME/build && \
-#    cd $HOME/build && \
-#      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
-#      cd gstreamer && \ 
-#      meson wrap install openssl && \
-#      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
-#      rm -rf /tmp/gstreamer
+RUN mkdir $HOME/build && \
+    cd $HOME/build && \
+      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
+      cd gstreamer && \ 
+      meson wrap install openssl && \
+      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+      rm -rf /tmp/gstreamer
 
-#RUN cd $HOME/build/gstreamer && \
-#    cp -R /tmp/debian ./ && \
-#      rm -rf /tmp/debian
+RUN cd $HOME/build/gstreamer && \
+    cp -R /tmp/debian ./ && \
+      rm -rf /tmp/debian
+
+ENTRYPOINT /build/scripts/entrypoint.sh
