@@ -4,6 +4,14 @@ FROM rust:slim-bookworm
 
 #RUN --mount=type=cache,target=/usr/local/cargo \
 #. "$CARGO_HOME/env" && \
+
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.cargo \
+    apt update && \
+    apt install -y \
+      --no-install-recommends \
+      openssl \
+      libssl-dev
+
 RUN printf "\n[net]\ngit-fetch-with-cli = true\n" > "$CARGO_HOME/config.toml" && \
 printf "\n[build]\njobs = 4\n\n" >> "$CARGO_HOME/config.toml" && \
 cargo install cargo-c
