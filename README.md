@@ -4,7 +4,7 @@ The purpose of this build environment which includes `gst-plugins-rs` is because
 
 `gst-plugins-rs` requires Rustc for compiling which requires 16GB or more of memory to properly compile without a critical SIGINT failure in Docker. Rust is incredibly bloaty and took 4 weeks to get to a point of building these plugins with little help of failure problems. 
 
-There is a bug with meson and cargo that disabling plugins doesn't work. To work around this individual plugins need to be compiled seperately so a seperate build is required. Unless you have a machine with big resources building gst-plugin-rs in the same build as gstreamer will fail. 
+There is a bug with meson and cargo that disabling plugins doesn't work. Modifying the options to just the plugin you need, cargo will still attempt fetch unrelated crate packages and compile them all which increases time and resources. To work around this individual plugins need to be compiled seperately so a seperate build is required. Unless you have a machine with big resources building gst-plugin-rs in the same build as gstreamer will fail. 
 
 The rest of the project uses minimal memory and cpu. C compiling is very fast and no fuss although there was many Gstreamer build failures along the way that needed wrangling.
 
@@ -69,7 +69,7 @@ Wierd conflict errors show so subprojects may need to be purged
 
 ```
 /build/scripts/purge_subprojects.sh
-``
+```
 
 # Installing Package
 
