@@ -3,6 +3,7 @@
 REPO="danrossi/gstreamer"
 IMAGE="gst-build-cross"
 IMAGE_PI="gst-build-cross-pi"
+IMAGE_RUST="rust"
 IMAGE_UBUNTU="gst-build-cross-ubuntu"
 VERSION=$(cat VERSION)
 WORKDIR="/build"
@@ -15,7 +16,7 @@ case "$1" in
     docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} uname -m
     ;;
   runpi)
-    docker run --platform linux/amd64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
+    docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
     ;;
   build)
     docker build --tag ${REPO}/${IMAGE}:${VERSION} --file Dockerfile .
@@ -26,6 +27,13 @@ case "$1" in
   buildpi)
     docker build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
     #docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
+    ;;
+  buildrust)
+    docker build --platform=linux/arm64 --tag ${REPO}/${IMAGE_RUST}:${VERSION}  --file Dockerfile.rust .
+    #docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
+    ;;
+  runrust)
+    docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_RUST}:${VERSION} /bin/bash
     ;;
   *)
     echo "Usage: $0 {run|build}"

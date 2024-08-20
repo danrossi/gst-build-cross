@@ -1,0 +1,8 @@
+# syntax = docker/dockerfile:1.2
+
+FROM rust:slim-bookworm
+
+#RUN --mount=type=cache,target=/usr/local/cargo \
+#. "$CARGO_HOME/env" && \
+RUN cargo install cargo-c
+
