@@ -22,39 +22,13 @@ PKG_DESTDIR=$(CURDIR)/debian/gstreamer1.0
 export DESTDIR=${PKG_DESTDIR}
 
 
-#$(info  DESTDIR is $(DESTDIR))
-#$(info    HOME is $(HOME))
-#$(info    PATH is $(PATH))
-DEB_BUILD_OPTIONS="lang=en-US ccache nocheck noddebs parallel=4"
-#DEB_BUILD_OPTIONS=nocheck
+DEB_BUILD_OPTIONS="lang=en-US ccache nocheck noddebs parallel=$(nproc)"
 CFLAGS += -Wno-error
 CXXFLAGS += -Wno-error
 #LDFLAGS += -ldl -Wl,-z,defs -Wl,-O1 -lpython3.11 -L/lib/x86_64-linux-gnu
 LDFLAGS += -Wl,-z,defs -Wl,-O1
 LIBS=-lpython3.11
 RUSTFLAGS += -Copt-level=3 -Cdebuginfo=2 -Clinker=${DEB_HOST_MULTIARCH}-gcc
-
-#$(info    RUSTFLAGS is $(RUSTFLAGS))
-#$(info    CARGO_HOME is $(CARGO_HOME))
-
-
-# Let's decide the package name and url depending on the distribution
-
-
-
-#conf_flags = --libexecdir=lib/$(DEB_HOST_MULTIARCH)/gstreamer1.0
-#conf_flags = -Dpackage-name=$(GST_PACKAGE_NAME) --buildtype=release --strip
-#conf_flags += --pkgconfig.relocatable --prefix=/opt/gstreamer -Dlibdir=lib
-#conf_flags += -Ddoc=disabled -Dexamples=disabled
-#conf_flags += -Dgst-full-libraries=app,video,player -Dwebrtc=enabled -Drtsp_server=disabled
-#conf_flags += -Dlibav=disabled -Dges=disabled -Dpython=enabled -Dgpl=enabled
-#conf_flags += -Dqt5=disabled -Dqt6=disabled -Dtests=disabled -Dgtk_doc=disabled
-#conf_flags += -Dgstreamer:examples=disabled -Dgstreamer:tests=disabled -Dgstreamer:doc=disabled
-#conf_flags += -Dgst-plugins-base:examples=disabled
-#conf_flags += -Dgst-plugins-bad:magicleap=disabled
-#conf_flags += -Dgst-plugins-good:examples=disabled 
-
-RECONFIGURE=""
 
 
 

@@ -42,6 +42,7 @@ meson setup \
   -Dorc:examples=disabled \
   -Dorc:gtk_doc=disabled \
   -Dorc:tests=disabled \
-  -Dgst-python:libpython-dir=lib/x86_64-linux-gnu \
   --reconfigure \
  ${BUILDDIR}
+
+   #-Dgst-python:libpython-dir=lib/x86_64-linux-gnu \
