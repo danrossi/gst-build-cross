@@ -2,7 +2,11 @@
 
 The purpose of this build environment which includes `gst-plugins-rs` is because GSTreamer does not compile out of the box with many points of failure. 
 
-`gst-plugins-rs` requires Rustc for compiling which requires 16GB or more of memory to properly compile without a critical SIGINT failure in Docker. Rust is incredibly bloaty and took 4 weeks to get to a point of building these plugins with little help of failure problems. There is a bug with meson and cargo that disabling plugins doesn't work. To work around this individual plugins need to be compiled seperately so a seperate build is required. Unless you have a machine with big resources building gst-plugin-rs in the same build as gstreamer will fail. The rest of the project uses minimal memory and cpu. C compiling is very fast and no fuss although there was many Gstreamer build failures along the way that needed wrangling.
+`gst-plugins-rs` requires Rustc for compiling which requires 16GB or more of memory to properly compile without a critical SIGINT failure in Docker. Rust is incredibly bloaty and took 4 weeks to get to a point of building these plugins with little help of failure problems. 
+
+There is a bug with meson and cargo that disabling plugins doesn't work. To work around this individual plugins need to be compiled seperately so a seperate build is required. Unless you have a machine with big resources building gst-plugin-rs in the same build as gstreamer will fail. 
+
+The rest of the project uses minimal memory and cpu. C compiling is very fast and no fuss although there was many Gstreamer build failures along the way that needed wrangling.
 
 There is poor support trying to deal with the typical build issues with GStreamer so it has to be figured out yourself. I've got it to a point where it will build out of the box without problems.
 
