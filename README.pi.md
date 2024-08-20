@@ -14,6 +14,16 @@ Linux priming with QEMU without Docker Desktop may be required.
 
 https://docs.docker.com/build/building/multi-platform/#qemu
 
+## Build the Rust image with cargo-c prebuilt
+
+There is a requirement of first building the rust image with cargo-c preinstalled. The PI image will take binaries from this build to prevent rebuilding. This compilation may take a few hours. The jobs setting might need to be customised to prevent failures and crashes.
+
+```
+./docker.sh buildrust
+```
+
+## Build the PI image
+
 This will build the required arm64 Debian Bookworm image primed with qemu-user-static and the required packages for building Gstreamer.
 
 ```
@@ -33,7 +43,7 @@ Confirmation qemu-user-static priming is working. It should show it's arm64.
 ```
 
 ```
-docker run  --platform linux/arm64 -it --rm danrossi/gstreamer/gst-build-cross-pi uname -m
+docker run  --platform linux/arm64 -it --rm danrossi/gstreamer/gst-build-cross-pi:latest uname -m
 ```
 
 Run the PI build image which will bring up an emulated shell.

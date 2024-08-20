@@ -29,7 +29,7 @@ case "$1" in
     #docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
     ;;
   buildrust)
-    docker build --platform=linux/arm64 --tag ${REPO}/${IMAGE_RUST}:${VERSION}  --file Dockerfile.rust .
+    docker build --platform=linux/arm64,linux/amd64 --tag ${REPO}/${IMAGE_RUST}:${VERSION}  --file Dockerfile.rust .
     #docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
     ;;
   runrust)

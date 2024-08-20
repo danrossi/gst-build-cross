@@ -23,6 +23,14 @@ It attempts to build and package a custom gstreamer into a deb package stored in
 
 An initial configure of gstreamer is required first to fetch the `gst-plugins-rs` subproject. Which will then be built seperately to Gstreamer to avoid SIGINT failures.
 
+## Build the Rust image with cargo-c prebuilt
+
+There is a requirement of first building the rust image with cargo-c preinstalled. The PI image will take binaries from this build to prevent rebuilding. This compilation may take a few hours. The jobs setting might need to be customised to prevent failures and crashes.
+
+```
+./docker.sh buildrust
+```
+
 # Building the image
 
 ```
