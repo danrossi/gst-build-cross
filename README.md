@@ -6,8 +6,8 @@ The purpose of this build environment which includes `gst-plugins-rs` is because
 
 There is poor support trying to deal with the typical build issues with GStreamer so it has to be figured out yourself. I've got it to a point where it will build out of the box without problems.
 
-[!NOTE]
-The PI Image makes use of Bulkit QEMU emulation for ARM64. Rustc and Cargoc Debian binaries can't be used as `gst-plugins-rs` requires a newer version of `cargo-cbuild`. Because Rust is so intensive and quite frankly ridiculous and a mistake and the point of taking 5 weeks to get a build system working for it. The PI image build trying to compile `cargo-c` and all it's bloaty dependancies may take hours to just build the image and still fail. Taking arm64 binaries from a pre-built image may be possible but can't find anything that has cargo-c installed.
+> [!NOTE]
+> The PI Image makes use of Bulkit QEMU emulation for ARM64. Rustc and Cargoc Debian binaries can't be used as `gst-plugins-rs` requires a newer version of `cargo-cbuild`. Because Rust is so intensive and quite frankly ridiculous and a mistake and the point of taking 5 weeks to get a build system working for it. The PI image build trying to compile `cargo-c` and all it's bloaty dependancies may take hours to just build the image and still fail. Taking arm64 binaries from a pre-built image may be possible but can't find anything that has cargo-c installed.
 
 In Windows a Windows command is required to turn on case sensitive to the mount path or a rust package will fail due to files being named the same.
 
