@@ -16,7 +16,8 @@ case "$1" in
     docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} uname -m
     ;;
   runpi)
-    docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
+    #docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
+    docker run --platform linux/arm64  -dit -v $(pwd):/build ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
     ;;
   build)
     docker build --tag ${REPO}/${IMAGE}:${VERSION} --file Dockerfile .
