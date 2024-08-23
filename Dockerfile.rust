@@ -15,7 +15,9 @@ RUN    apt update && \
       --no-install-recommends \
       pkg-config \
       openssl \
-      libssl-dev
+      libssl-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
 
 #RUN printf "\n[net]\ngit-fetch-with-cli = true\n" > "$CARGO_HOME/config.toml" && \
 #printf "\n[build]\njobs = 4\n\n" >> "$CARGO_HOME/config.toml" && \

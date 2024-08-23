@@ -22,9 +22,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt update && \
     apt install -y  dbus-system-bus-common && \
     dpkg --configure -a && \ 
-    apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
-    apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
-    apt remove -y gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 libgstreamer* && \
+    #apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
+    #apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
+    #apt remove -y gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 libgstreamer* libgirepository* gir1.2*   && \
     apt install -y \
       --no-install-recommends \
       binutils-aarch64-linux-gnu \
@@ -36,9 +36,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
-      libnice-dev \
       libglib2.0-dev \
-      libgirepository1.0-dev \
       libglib2.0-doc \
       liborc-0.4-dev-bin \
       git \
