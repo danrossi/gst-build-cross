@@ -20,7 +20,7 @@ set -e
 
 case "$1" in
     configure)
-        sh /etc/profile.d/gstreamer-env.sh
+        . /etc/profile.d/gstreamer-env.sh
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
