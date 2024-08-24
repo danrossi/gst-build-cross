@@ -33,13 +33,13 @@ case "$1" in
   #buildpi)
   #  docker build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
     #docker buildx build --platform=linux/arm64 --tag ${REPO}/${IMAGE_PI}:${VERSION}  --file Dockerfile.pi .
-    ;;
+    #;;
   buildrust)
     #docker build --tag ${REPO}/${IMAGE_RUST}:bookworm-slim  --file Dockerfile.rust .
     docker buildx build --platform=linux/arm64,linux/amd64 --tag ${REPO}/${IMAGE_RUST}:${DEBIAN_VARIANT}  --file Dockerfile.rust .
     ;;
   runrust)
-     docker run --platform linux/amd64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_RUST}:${DEBIAN_VARIANT} /bin/bash
+    docker run --platform linux/amd64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_RUST}:${DEBIAN_VARIANT} /bin/bash
     #docker run --platform linux/arm64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE_RUST}:${VERSION} /bin/bash
     ;;
   *)
