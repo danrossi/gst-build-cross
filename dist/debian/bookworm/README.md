@@ -15,25 +15,3 @@ Inside the directory is an install script and the deb package to install. It wil
 ```
 ./uninstall.sh
 ```
-
-#Python 11 required for focal
-
-A repository is required to be setup to install the latest python in Ubuntu if it doesn't have Python 11 installed already.
-
-To check the version installed
-```
-python3 -V
-```
-
-To setup a repository for the latest Python.
-
-```
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install python3.11
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
-sudo update-alternatives --config python
-```
-
-#Install pipenv for the tests
-

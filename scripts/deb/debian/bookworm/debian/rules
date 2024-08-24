@@ -40,7 +40,8 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 #export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 # Package maintainers to append LDFLAGS.
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
-
+mkdir -p /root/build/gstreamer/debian/gstreamer1.0/etc/profile.d
+install -D -m 0755 /build/scripts/profile.d/gstreamer-env.sh /root/build/gstreamer/debian/gstreamer1.0/etc/gstreamer-env.sh
 
 %:
 	dh $@ --with python3 --buildsystem=meson
@@ -57,9 +58,10 @@ override_dh_auto_install:
 	meson install --destdir ${PKG_DESTDIR}  -C ${BUILDDIR}
 # build and install the rust plugins
 	/build/scripts/install-rs.sh ${BUILDDIR} ${PKG_DESTDIR} $(CURDIR)
-	mkdir -p ${PKG_DESTDIR}/etc/
+	mkdir -p ${PKG_DESTDIR}/etc/profile.d
+	install -D -m 0755 /build/scripts/profile.d/gstreamer-env.sh ${PKG_DESTDIR}/etc/profile.d/gstreamer-env.sh
 # copy the environment script
-	cp -R /build/scripts/profile.d ${PKG_DESTDIR}/etc/
+#	#cp -R /build/scripts/profile.d ${PKG_DESTDIR}/etc/
 
 
 

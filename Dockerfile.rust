@@ -1,27 +1,159 @@
 # syntax = docker/dockerfile:1.2
 
-FROM rust:slim-bookworm
+#FROM rust:slim-bookworm
+FROM debian:bookworm-slim
 
 ENV RUSTFLAGS="-Z threads=8"
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
-#RUN --mount=type=cache,target=/usr/local/cargo \
-#. "$CARGO_HOME/env" && \
+ENV CARGO_HTTP_DEBUG=true
+ENV CARGO_LOG=cargo::ops::registry=debug
+ENV CARGO_HOME=/root/.cargo
+ENV RUSTUP_HOME=/root/.cargo
+ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
 
-#RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/root/.cargo \
-RUN    apt update && \
-    apt upgrade -y && \
+ARG DEBIAN_FRONTEND=noninteractive
+
+COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+
+RUN --mount=type=cache,target=/var/cache/apt \
+    dpkg --add-architecture arm64 && \
+    apt update && \
+    apt install -y  dbus-system-bus-common && \
+    dpkg --configure -a && \ 
     apt install -y \
       --no-install-recommends \
+      binutils-aarch64-linux-gnu \
+      g++-aarch64-linux-gnu \
+      gcc-aarch64-linux-gnu \
+      ccache \
+      libssl-dev \
+      libssl-dev:arm64 \
+      libogg-dev \
+      libpng-dev \
+      libtiff-dev \
+      libglib2.0-dev \
+      libglib2.0-doc \
+      liborc-0.4-dev-bin \
+      git \
+      cpio \
+      build-essential \
+      devscripts \
+      debhelper \
+      dh-sequence-python3 \
+      dh-make \
+      bison \
+      flex \
+      autotools-dev \
+      automake \
+      autoconf \
+      libtool \
+      g++ \
+      autopoint \
+      make \
+      cmake \
+      ninja-build \
+      bison \
+      flex \
+      nasm \
       pkg-config \
+      libxv-dev \
+      libpulse-dev \
+      python3 \
+      python3-setuptools \
+      ninja-build \
+      python3-pip \
+      python3-all-dev \
+      libcairo2-dev \
+      libogg-dev \
+      libopus-dev \
+      libsrt-openssl-dev \
       openssl \
-      libssl-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
+      curl \
+      nano && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/* && \
+      pip3 install \
+      --break-system-packages \
+      --force-reinstall \
+      meson
 
-#RUN printf "\n[net]\ngit-fetch-with-cli = true\n" > "$CARGO_HOME/config.toml" && \
-#printf "\n[build]\njobs = 4\n\n" >> "$CARGO_HOME/config.toml" && \
-RUN rustup toolchain install nightly && \
-rustup default nightly && \
-cargo +nightly install --jobs 6 cargo-c
 
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
+    rustup toolchain install nightly && \
+    rustup default nightly && \
+    printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+    printf "\n[build]\njobs = 6" >> "$CARGO_HOME/config.toml" && \
+    cargo +nightly install cargo-c
+    
+
+RUN mkdir $HOME/build && \
+    cd $HOME/build && \
+      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
+      cd gstreamer && \ 
+      meson wrap install openssl && \
+      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+      rm -rf /tmp/gstreamer
+  
+RUN cd $HOME/build/gstreamer && \
+    cp -R /tmp/debian ./ && \
+      rm -rf /tmp/debian
+
+RUN pip3 uninstall -y \
+--break-system-packages \
+meson && \
+pip3 cache purge
+
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt remove -y \
+      binutils-aarch64-linux-gnu \
+      g++-aarch64-linux-gnu \
+      gcc-aarch64-linux-gnu \
+      ccache \
+      libssl-dev \
+      libssl-dev:arm64 \
+      libogg-dev \
+      libpng-dev \
+      libtiff-dev \
+      libglib2.0-dev \
+      libglib2.0-doc \
+      liborc-0.4-dev-bin \
+      git \
+      cpio \
+      build-essential \
+      devscripts \
+      debhelper \
+      dh-sequence-python3 \
+      dh-make \
+      bison \
+      flex \
+      autotools-dev \
+      automake \
+      autoconf \
+      libtool \
+      g++ \
+      autopoint \
+      make \
+      cmake \
+      ninja-build \
+      bison \
+      flex \
+      nasm \
+      pkg-config \
+      libxv-dev \
+      libpulse-dev \
+      python3 \
+      python3-setuptools \
+      ninja-build \
+      python3-pip \
+      python3-all-dev \
+      libcairo2-dev \
+      libogg-dev \
+      libopus-dev \
+      libsrt-openssl-dev \
+      openssl \
+      curl \
+      nano && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/*
