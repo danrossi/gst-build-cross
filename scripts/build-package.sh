@@ -3,8 +3,10 @@
 . /etc/os-release
 mkdir -p /build/dist/${ID}/${VERSION_CODENAME}
 
-echo $ID
-echo ${VERSION_CODENAME}
+cp /build/scripts/deb/debian/bookworm/debian/control $HOME/build/gstreamer/debian/ && \
+cp /build/scripts/deb/debian/bookworm/debian/changelog $HOME/build/gstreamer/debian/
+#echo $ID
+#echo ${VERSION_CODENAME}
 
 cd $HOME/build/gstreamer && \
 build.sh &&
