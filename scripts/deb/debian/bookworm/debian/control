@@ -7,14 +7,10 @@ Build-Depends:
  debhelper-compat (= 13),
  dh-sequence-python3,
  dh-python,
- libcairo2-dev,
  python3-all-dev,
  python3-all,
  python3-setuptools,
- python3,
- meson,
- ccache,
- ninja-build,
+ python3
 Standards-Version: 4.6.2
 Homepage: <insert the upstream URL, if relevant>
 #Vcs-Browser: https://salsa.debian.org/debian/gstreamer
