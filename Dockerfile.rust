@@ -3,7 +3,7 @@
 #FROM rust:slim-bookworm
 FROM debian:bookworm-slim
 
-ENV RUSTFLAGS="-Z threads=8"
+ENV RUSTFLAGS="-C codegen-units=1 -C opt-level=3 -Z threads=8 -Z thinlto"
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ENV CARGO_HTTP_DEBUG=true
@@ -13,23 +13,30 @@ ENV RUSTUP_HOME=/root/.cargo
 ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG TARGETPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
 
 COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
 
-RUN --mount=type=cache,target=/var/cache/apt \
-    dpkg --add-architecture arm64 && \
-    apt update && \
-    apt install -y  dbus-system-bus-common && \
-    dpkg --configure -a && \ 
-    apt install -y \
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
+    echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \
+    #dpkg --add-architecture arm64 && \
+    apt update -qq && \
+    #apt install -y  dbus-system-bus-common && \
+    #dpkg --configure -a && \ 
+    apt install -qq -y \
       --no-install-recommends \
-      binutils-aarch64-linux-gnu \
-      g++-aarch64-linux-gnu \
-      gcc-aarch64-linux-gnu \
+      #binutils-aarch64-linux-gnu \
+      #g++-aarch64-linux-gnu \
+      #gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      libssl-dev:arm64 \
+      #libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
@@ -50,6 +57,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       autoconf \
       libtool \
       g++ \
+      binutils \
       autopoint \
       make \
       cmake \
@@ -105,14 +113,17 @@ RUN pip3 uninstall -y \
 meson && \
 pip3 cache purge
 
-RUN --mount=type=cache,target=/var/cache/apt \
+
+
+
+RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
     apt remove -y \
-      binutils-aarch64-linux-gnu \
-      g++-aarch64-linux-gnu \
-      gcc-aarch64-linux-gnu \
+      #binutils-aarch64-linux-gnu \
+      #g++-aarch64-linux-gnu \
+      #gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      libssl-dev:arm64 \
+      #libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
@@ -133,6 +144,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       autoconf \
       libtool \
       g++ \
+      binutils \
       autopoint \
       make \
       cmake \
