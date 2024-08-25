@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.2
-FROM danrossi/gstreamer/rust:bookworm-slim as rustbuilder
+FROM danrossi/gstreamer/gst-rust:bookworm-slim as rustbuilder
 
 FROM debian:bookworm-slim
 ENV LANG=C.UTF-8
