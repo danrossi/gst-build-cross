@@ -11,27 +11,25 @@ ENV RUSTUP_HOME=/root/.cargo
 ENV PATH=$RUSTUP_HOME/bin:/build/scripts:$PATH
 #ENV XDG_CACHE_HOME=/build/src/.cache
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-ENV RUSTFLAGS="-Z threads=8"
+ENV RUSTFLAGS="-C codegen-units=1 -C opt-level=3 -Z threads=8 -Z thinlto"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ARG DEBIAN_FRONTEND=noninteractive
+ARG TARGETPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
 WORKDIR /build
 # GStreamer needs meson version >= 1.1.
 
-COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
+#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
-RUN --mount=type=cache,target=/var/cache/apt \
-    dpkg --add-architecture arm64 && \
-    apt update && \
-    apt install -y  dbus-system-bus-common && \
-    dpkg --configure -a && \ 
-    apt install -y \
+RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
+    echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \
+    apt update -qq && \
+    apt install -qq -y \
       --no-install-recommends \
-      binutils-aarch64-linux-gnu \
-      g++-aarch64-linux-gnu \
-      gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
@@ -52,6 +50,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       autoconf \
       libtool \
       g++ \
+      binutils \
       autopoint \
       make \
       cmake \
