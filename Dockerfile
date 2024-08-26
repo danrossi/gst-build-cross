@@ -84,6 +84,6 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
 
 COPY --from=rustbuilder /root/.cargo /root/.cargo
 COPY --from=rustbuilder /root/build/gstreamer /root/build/gstreamer
-
+COPY scripts/deb/debian/bookworm/debian /root/build/gstreamer/debian
 
 ENTRYPOINT /build/scripts/entrypoint.sh
