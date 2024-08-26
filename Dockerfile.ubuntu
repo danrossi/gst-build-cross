@@ -1,4 +1,5 @@
 # syntax = docker/dockerfile:1.2
+FROM danrossi/gstreamer/gst-rust:bookworm-slim as rustbuilder
 FROM ubuntu:noble
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
@@ -12,16 +13,17 @@ ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 ENV RUSTFLAGS="-Z threads=8"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ARG DEBIAN_FRONTEND=noninteractive
+ARG TARGETPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
 WORKDIR /build
 # GStreamer needs meson version >= 1.1.
 
-COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
+#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
-RUN --mount=type=cache,target=/var/cache/apt \
+RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
     apt update && \
-    #apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl  gstreamer1.0-pulseaudio && \
-    #apt-get remove -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-pulseaudio && \
-    #apt remove -y gir1.2-gst-plugins-bad-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 libgstreamer* && \
     apt install -y \
       --no-install-recommends \
       ccache \
@@ -49,6 +51,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       autoconf \
       libtool \
       g++ \
+      binutils \
       autopoint \
       make \
       cmake \
@@ -62,7 +65,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
       python3 \
       python3-setuptools \
       ninja-build \
-      meson \
       python3-pip \
       python3-venv \
       python3-pytest \
@@ -82,33 +84,38 @@ RUN --mount=type=cache,target=/var/cache/apt \
       --force-reinstall \
       meson
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
-rustup toolchain install nightly && \
-rustup default nightly && \
-cargo +nightly install cargo-c && \
-echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc && \
-printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
-printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
+#RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
+#rustup toolchain install nightly && \
+#rustup default nightly && \
+#cargo +nightly install cargo-c && \
+#echo "alias cargo=\"RUSTFLAGS='-Z threads=8' cargo +nightly\"" >> $HOME/.bashrc && \
+#printf "[net]\ngit-fetch-with-cli = true" >> "$CARGO_HOME/config.toml" && \
+#printf "\n[build]\njobs = 4" >> "$CARGO_HOME/config.toml"
 
-COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
+#COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
 #COPY scripts/deb/ubuntu/control /tmp/debian/
-COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+#COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
-RUN mkdir $HOME/build && \
-    cd $HOME/build && \
-      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
-      cd gstreamer && \
-      #meson wrap install openssl 
-      meson wrap install openssl && \
-      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
-      rm -rf /tmp/gstreamer
+#RUN mkdir $HOME/build && \
+#    cd $HOME/build && \
+#      git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer && \
+#      cd gstreamer && \
+#      #meson wrap install openssl 
+#      meson wrap install openssl && \
+#      /tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+#      rm -rf /tmp/gstreamer
 
-RUN cd $HOME/build/gstreamer && \
-    cp -R /tmp/debian ./ && \
-      rm -rf /tmp/debian
+#RUN cd $HOME/build/gstreamer && \
+#    cp -R /tmp/debian ./ && \
+#      rm -rf /tmp/debian
 
 
-COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
+#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
+
+COPY --from=rustbuilder /root/.cargo /root/.cargo
+COPY --from=rustbuilder /root/build/gstreamer /root/build/gstreamer
+COPY scripts/deb/debian/bookworm/debian /root/build/gstreamer/debian
+
 
   
 ENTRYPOINT /build/scripts/entrypoint.sh

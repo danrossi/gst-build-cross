@@ -21,7 +21,6 @@ ARG TARGETVARIANT
 WORKDIR /build
 # GStreamer needs meson version >= 1.1.
 
-#COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
 RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
     echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \

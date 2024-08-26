@@ -12,8 +12,6 @@ Build-Depends:
  python3-all,
  python3-setuptools,
  python3,
- meson,
- ccache,
  ninja-build,
 Standards-Version: 4.6.2
 Homepage: <insert the upstream URL, if relevant>

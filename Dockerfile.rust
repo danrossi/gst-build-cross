@@ -25,18 +25,11 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloa
 
 RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
     echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \
-    #dpkg --add-architecture arm64 && \
     apt update -qq && \
-    #apt install -y  dbus-system-bus-common && \
-    #dpkg --configure -a && \ 
     apt install -qq -y \
       --no-install-recommends \
-      #binutils-aarch64-linux-gnu \
-      #g++-aarch64-linux-gnu \
-      #gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      #libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
@@ -118,12 +111,8 @@ pip3 cache purge
 
 RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
     apt remove -y \
-      #binutils-aarch64-linux-gnu \
-      #g++-aarch64-linux-gnu \
-      #gcc-aarch64-linux-gnu \
       ccache \
       libssl-dev \
-      #libssl-dev:arm64 \
       libogg-dev \
       libpng-dev \
       libtiff-dev \
