@@ -22,14 +22,12 @@ WORKDIR /build
 
 #COPY scripts/nsswitch/nsswitch.conf /etc/nsswitch.conf
 
-RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
-    apt update && \
-    apt install -y \
+RUN --mount=type=cache,id=apt-$TARGETARCH-ubuntunoble,sharing=locked,target=/var/cache/apt \
+    echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \
+    apt update -qq && \
+    apt install -qq -y \
       --no-install-recommends \
       ccache \
-      libglfw3-dev \
-      libgles2-mesa-dev \
-      libdrm-dev \
       libssl-dev \
       libogg-dev \
       libpng-dev \
@@ -66,23 +64,20 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
       python3-setuptools \
       ninja-build \
       python3-pip \
-      python3-venv \
-      python3-pytest \
-      python3-distro \
       python3-all-dev \
       libcairo2-dev \
       libogg-dev \
       libopus-dev \
+      libsrt-openssl-dev \
       openssl \
       curl \
       nano && \
-      apt remove -y libgstreamer* gstreamer* gir* && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
       pip3 install \
       --break-system-packages \
       --force-reinstall \
-      meson
+      meson 
 
 #RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
 #rustup toolchain install nightly && \
@@ -94,7 +89,6 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
 
 #COPY scripts/deb/debian/bookworm/debian/ /tmp/debian/
 #COPY scripts/deb/ubuntu/control /tmp/debian/
-#COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
 
 #RUN mkdir $HOME/build && \
 #    cd $HOME/build && \
@@ -116,6 +110,11 @@ COPY --from=rustbuilder /root/.cargo /root/.cargo
 COPY --from=rustbuilder /root/build/gstreamer /root/build/gstreamer
 COPY scripts/deb/debian/bookworm/debian /root/build/gstreamer/debian
 
+COPY scripts/configure-initial-gst.sh /tmp/gstreamer/
+RUN cd $HOME/build/gstreamer && \
+rm -rf  build-x86_64-linux-gnu && \
+/tmp/gstreamer/configure-initial-gst.sh $HOME/build/gstreamer && \
+rm -rf /tmp/gstreamer
 
   
 ENTRYPOINT /build/scripts/entrypoint.sh

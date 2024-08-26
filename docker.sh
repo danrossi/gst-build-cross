@@ -24,7 +24,10 @@ case "$1" in
     #docker run --platform linux/arm64  -dit -v $(pwd):/build ${REPO}/${IMAGE_PI}:${VERSION} /bin/bash
     ;;
   runubuntu)
-    docker run --platform linux/amd64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE}:noble /bin/bash
+    docker run -it --platform linux/amd64 --net=host -v ${PWD}:${WORKDIR}:z --workdir ${WORKDIR} --rm ${REPO}/${IMAGE}:noble /bin/bash
+    #docker run -dit --platform linux/amd64 --net=host -v ${PWD}:${WORKDIR}:z --workdir ${WORKDIR} ${REPO}/${IMAGE}:noble /bin/bash
+    #docker run --platform linux/amd64  -it -v $(pwd):/build  ${REPO}/${IMAGE}:noble /bin/bash
+    #docker run --platform linux/amd64  -it -v $(pwd):/build --rm ${REPO}/${IMAGE}:noble /bin/bash
     #docker run -dit --net=host -v ${PWD}:${WORKDIR}:z --workdir ${WORKDIR} ${REPO}/${IMAGE}:${VERSION} /bin/bash
     ;;
   build)
@@ -32,7 +35,7 @@ case "$1" in
     docker buildx build --platform=linux/arm64,linux/amd64 --tag ${REPO}/${IMAGE}:${DEBIAN_VARIANT}  --file Dockerfile .
     ;;
   buildubuntu)
-    docker build --tag ${REPO}/${IMAGE}:noble --file Dockerfile.ubuntu .
+    docker buildx build --platform=linux/amd64 --tag ${REPO}/${IMAGE}:noble --file Dockerfile.ubuntu .
     ;;
   buildrust)
     #docker build --tag ${REPO}/${IMAGE_RUST}:bookworm-slim  --file Dockerfile.rust .

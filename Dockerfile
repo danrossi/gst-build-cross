@@ -22,7 +22,7 @@ WORKDIR /build
 # GStreamer needs meson version >= 1.1.
 
 
-RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
+RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT-debianbookworm,sharing=locked,target=/var/cache/apt \
     echo "[+] Installing APT base system dependencies for $TARGETPLATFORM..." && \
     apt update -qq && \
     apt install -qq -y \
@@ -77,9 +77,7 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
       pip3 install \
       --break-system-packages \
       --force-reinstall \
-      meson \
-      pytest \
-      distro
+      meson
 
 COPY --from=rustbuilder /root/.cargo /root/.cargo
 COPY --from=rustbuilder /root/build/gstreamer /root/build/gstreamer
